@@ -1,0 +1,5 @@
+# 均为纯 Python 包（MarkupSafe 等依赖使用官方 manylinux wheel），
+# 安装时配合 --only-binary=:all: 可确保服务器上不发生任何本地编译。
+Flask==3.0.3
+PyMySQL==1.1.1
+gunicorn==22.0.0

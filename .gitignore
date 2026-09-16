@@ -1,0 +1,35 @@
+# ---------- 依赖 ----------
+node_modules/
+.rcedit_tmp/
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.pip/
+
+# ---------- 机密配置（切勿提交！）----------
+# server/api/config.py 内含数据库密码、会话签名密钥、邮箱 SMTP 授权码
+# 部署时请复制 config.example.py 为 config.py 并填入自己的凭据
+server/api/config.py
+
+# ---------- 构建产物 ----------
+打字练习-win32-x64/
+dist/
+out/
+build/
+*.exe
+*.msi
+*.7z
+*.zip
+
+# ---------- 运行时数据与日志 ----------
+data/
+backups/
+*.log
+
+# ---------- 编辑器 / 系统 ----------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

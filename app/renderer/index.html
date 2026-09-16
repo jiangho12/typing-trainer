@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打字训练场 · Typing Trainer</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23111418'/><text x='50' y='70' font-size='56' text-anchor='middle' fill='%23fff44f' font-family='monospace' font-weight='bold'>A</text></svg>">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+
+  <!-- ================= 加载页 ================= -->
+  <div class="splash" id="splashOverlay">
+    <div class="splash-grid"></div>
+    <div class="splash-glow"></div>
+    <div class="splash-box">
+      <div class="splash-logo"><img src="assets/icon.png" alt="CIOT"></div>
+      <div class="splash-title">打字训练场</div>
+      <div class="splash-en">KEYSTROKE TRAINING TERMINAL</div>
+      <div class="splash-tags">
+        <span>CLOUD SYNC</span><span>NO ADS</span><span>NO BUNDLE</span>
+      </div>
+      <div class="splash-bar"><i id="splashBar"></i></div>
+      <div class="splash-status"><span id="splashPct">0%</span><span id="splashMsg">正在加载训练模块</span><b class="cursor"></b></div>
+      <div class="splash-studio"><img src="assets/icon.png" alt=""><b>CIOT 工作室</b> · CIOT STUDIO PRESENTS</div>
+    </div>
+    <div class="splash-corner tl">TD-01</div>
+    <div class="splash-corner tr">TYPING TRAINER v1.2</div>
+    <div class="splash-corner bl">邮箱登录 · 成绩云端同步</div>
+    <div class="splash-corner br">© CIOT STUDIO 2026</div>
+  </div>
+
+  <!-- ================= 免责公告 ================= -->
+  <div class="disclaim hidden" id="disclaimerOverlay">
+    <div class="disclaim-backdrop"></div>
+    <div class="disclaim-panel">
+      <div class="disclaim-head">
+        <img src="assets/icon.png" alt="CIOT">
+        <div>
+          <div class="disclaim-brand">CIOT 工作室</div>
+          <div class="disclaim-title">免责公告 <span>DISCLAIMER NOTICE</span></div>
+        </div>
+        <span class="disclaim-code">DOC 001 / v1.2</span>
+      </div>
+      <div class="disclaim-body">
+        <p>欢迎使用《打字训练场》。在使用本软件前，请阅读并确认以下事项：</p>
+        <ol>
+          <li>本软件由 <b>CIOT 工作室</b> 开发，完全免费，仅供个人学习与打字练习使用，<b>禁止用于商业用途或任何非法用途</b>，禁止未经授权二次分发。</li>
+          <li>软件<b>无广告、无捆绑安装</b>。使用前需通过<b>邮箱验证码</b>登录；训练成绩会同步保存至 CIOT 工作室的云端数据库，便于多台电脑共享同一份成绩记录。除此之外不收集任何个人信息，也不会向第三方提供数据。</li>
+          <li>软件按“现状”提供，作者不对因使用或误用本软件产生的任何直接或间接损失承担责任。请自行定期导出成绩备份。</li>
+          <li>如在使用中发现缺陷或有改进建议，欢迎联系 CIOT 工作室反馈，我们将持续维护与更新。</li>
+        </ol>
+        <p class="disclaim-note">点击“同意并进入”即表示您已阅读并同意以上条款。本公告仅首次启动时显示。</p>
+      </div>
+      <div class="disclaim-foot">
+        <button class="btn" id="disclaimQuit">退出软件</button>
+        <button class="btn btn-primary" id="disclaimAgree">同意并进入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 登录 / 注册 ================= -->
+  <div class="auth hidden" id="authOverlay">
+    <div class="auth-backdrop"></div>
+    <div class="auth-panel">
+      <div class="auth-head">
+        <img src="assets/icon.png" alt="CIOT">
+        <div>
+          <div class="auth-brand">CIOT 工作室</div>
+          <div class="auth-name">打字训练场</div>
+        </div>
+        <span class="auth-code">AUTH / v1.2</span>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="authTabLogin">登录</button>
+        <button class="auth-tab" id="authTabRegister">注册</button>
+      </div>
+
+      <div class="auth-body">
+        <h3 id="authTitle">登录账号</h3>
+        <p id="authDesc">使用邮箱验证码登录，训练成绩自动同步到云端</p>
+
+        <label class="auth-label" for="authEmail">邮箱 EMAIL</label>
+        <input class="input" id="authEmail" type="email" placeholder="yourname@qq.com"
+               autocomplete="off" spellcheck="false">
+
+        <label class="auth-label" for="authCode">验证码 CODE</label>
+        <div class="auth-row">
+          <input class="input" id="authCode" inputmode="numeric" maxlength="6"
+                 placeholder="6 位数字验证码" autocomplete="off">
+          <button class="btn" id="authCodeBtn">获取验证码</button>
+        </div>
+
+        <div id="authNicknameRow" class="hidden">
+          <label class="auth-label" for="authNickname">昵称 NICKNAME（可选）</label>
+          <input class="input" id="authNickname" maxlength="20"
+                 placeholder="给自己起个名字" autocomplete="off">
+        </div>
+
+        <div class="auth-msg" id="authMsg"></div>
+
+        <button class="btn btn-primary auth-submit" id="authSubmit">登录</button>
+        <p class="auth-foot-note">
+          登录即表示同意《免责公告》中的条款；训练成绩将保存到 CIOT 工作室的云端数据库。
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="app">
+
+  <!-- ================= 侧边栏 ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div>
+        <div class="brand-title">打字训练场</div>
+        <span class="brand-code">TYPING TRAINER / KEYSTROKE DRILL</span>
+      </div>
+    </div>
+
+    <div class="nav-group-label">基础训练 / BASIC DRILL</div>
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-page="home">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span>
+        <span>首页总览</span><span class="nav-code">00</span>
+      </button>
+      <button class="nav-item" data-page="practice" data-mode="keys">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg></span>
+        <span>键位入门</span><span class="nav-code">01</span>
+      </button>
+      <button class="nav-item" data-page="practice" data-mode="words">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span>
+        <span>英文单词</span><span class="nav-code">02</span>
+      </button>
+      <button class="nav-item" data-page="practice" data-mode="article">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span>
+        <span>英文文章</span><span class="nav-code">03</span>
+      </button>
+      <button class="nav-item" data-page="practice" data-mode="chinese">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h7M7 3v2c0 4-2 7-5 8"/><path d="M7 8c0 2.5 2 4.5 4.5 5"/><path d="M13 20l4-9 4 9M14.7 17h4.6"/></svg></span>
+        <span>中文拼音</span><span class="nav-code">04</span>
+      </button>
+      <button class="nav-item" data-page="practice" data-mode="number">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></svg></span>
+        <span>数字专项</span><span class="nav-code">05</span>
+      </button>
+      <button class="nav-item" data-page="practice" data-mode="code">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></span>
+        <span>代码片段</span><span class="nav-code">06</span>
+      </button>
+
+      <div class="nav-group-label" style="padding-left:0">强化 / DATA</div>
+      <button class="nav-item" data-page="game">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 19l-4-1 2-7 4 1M8 19l6-13 4 1-4 11M8 19l-1 2"/><path d="M14 7l4 1 3 6-2 2-3-1"/></svg></span>
+        <span>单词雨游戏</span><span class="nav-code">07</span>
+      </button>
+      <button class="nav-item" data-page="stats">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>
+        <span>成绩统计</span><span class="nav-code">08</span>
+      </button>
+      <button class="nav-item" data-page="howto">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 .3c0 1.7-2.5 2-2.5 3.7"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+        <span>指法说明</span><span class="nav-code">09</span>
+      </button>
+      <button class="nav-item" data-page="profile">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span>
+        <span>我的主页</span><span class="nav-code">10</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div><span class="offline-dot"></span>CLOUD SYNC / 成绩云端同步</div>
+      <div style="margin-top:6px">无广告 · 无捆绑 · 邮箱登录</div>
+    </div>
+  </aside>
+
+  <!-- ================= 主区域 ================= -->
+  <main class="main">
+    <div class="system-bar">
+      <span class="system-id">TD-01</span>
+      <span>KEYSTROKE TRAINING TERMINAL</span>
+      <div class="system-track"></div>
+      <span class="system-state"><span class="dot"></span><span id="sysState">READY</span></span>
+      <span class="system-ver" id="sysVer">v1.2.0</span>
+    </div>
+
+    <!-- ========== 首页 ========== -->
+    <section class="page active" id="page-home">
+      <div class="page-head" data-eyebrow="HOME / CONTROL SURFACE">
+        <div>
+          <h1>打字训练场</h1>
+          <div class="page-sub">FROM HOME ROW TO BLIND TYPING — 从基准键到盲打，成绩多端同步</div>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-primary" id="homeStartBtn">开始今日训练</button>
+        </div>
+      </div>
+
+      <div class="stat-strip" id="homeStats"></div>
+
+      <div class="section-label"><span class="idx">A</span>基础训练模块</div>
+      <div class="mode-grid" id="modeGrid"></div>
+
+      <div class="section-label"><span class="idx">B</span>强化与数据</div>
+      <div class="mode-grid" style="grid-template-columns:repeat(2,1fr)">
+        <button class="mode-card game" data-page="game">
+          <span class="mc-code">MODULE 07</span>
+          <span class="mc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 19l-4-1 2-7 4 1M8 19l6-13 4 1-4 11M8 19l-1 2"/><path d="M14 7l4 1 3 6-2 2-3-1"/></svg></span>
+          <h3>单词雨</h3>
+          <p>单词不断落下，敲对即可消除，漏掉 3 个结束。速度随等级提升，训练反应与拼写。</p>
+        </button>
+        <button class="mode-card" data-page="howto">
+          <span class="mc-code">MODULE 09</span>
+          <span class="mc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 .3c0 1.7-2.5 2-2.5 3.7"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          <h3>指法与说明</h3>
+          <p>标准指法手位、十指分工、各模式练习方法，以及成绩口径说明。</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- ========== 练习页 ========== -->
+    <section class="page" id="page-practice">
+      <div class="page-head" data-eyebrow="DRILL / LIVE SESSION">
+        <div>
+          <h1 id="pracTitle">键位入门</h1>
+          <div class="page-sub" id="pracSub">分节掌握每一排按键</div>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-sm" id="restartBtn">重新开始</button>
+          <button class="btn btn-sm btn-primary" id="newTextBtn">换一段</button>
+        </div>
+      </div>
+
+      <div class="chip-row" id="chipRow"></div>
+
+      <div class="metric-strip">
+        <div class="metric"><div class="mv accent" id="mWpm">0</div><div class="ml" id="wpmLabel">速度 字/分</div></div>
+        <div class="metric"><div class="mv ok" id="mAcc">100%</div><div class="ml">准确率</div></div>
+        <div class="metric"><div class="mv" id="mTime">0:00</div><div class="ml">用时</div></div>
+        <div class="metric"><div class="mv" id="mDone">0/0</div><div class="ml">进度</div></div>
+        <div class="metric"><div class="mv bad" id="mErr">0</div><div class="ml">错误次数</div></div>
+      </div>
+      <div class="progress-track"><i id="progBar"></i></div>
+
+      <div class="type-panel" id="typePanel" tabindex="0">
+        <div class="type-text" id="typeText"></div>
+        <div class="cn-text hidden" id="cnText"></div>
+        <input class="cn-input hidden" id="cnInput" autocomplete="off" placeholder="切换到中文输入法，在此输入上面的文字…">
+        <div class="overlay" id="startOverlay">
+          <div>
+            <h3 id="ovTitle">准备开始</h3>
+            <p id="ovDesc">点击开始或直接按下任意键启动训练<br>输入错误不会跳过，按对才能继续</p>
+            <button class="btn btn-primary" id="startBtn">开始练习</button>
+            <p style="margin-top:15px;margin-bottom:0;font-size:12px">
+              <kbd class="big-key">Enter</kbd> 开始　　<kbd class="big-key">Esc</kbd> 重来
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="kb-wrap">
+        <div class="kb" id="keyboard"></div>
+        <div class="kb-legend" id="kbLegend"></div>
+        <button class="kb-toggle" id="kbToggle">隐藏指法配色</button>
+      </div>
+    </section>
+
+    <!-- ========== 结算页 ========== -->
+    <section class="page" id="page-result">
+      <div class="page-head" data-eyebrow="RESULT / SESSION REPORT">
+        <div>
+          <h1>训练报告</h1>
+          <div class="page-sub">SESSION COMPLETE — 本次训练数据已记录到本地</div>
+        </div>
+      </div>
+      <div class="result-head">
+        <div class="ring-wrap">
+          <canvas id="ringCanvas" width="148" height="148"></canvas>
+          <div class="ring-num"><div><b id="rAcc">0%</b><span id="rAccLabel">准确率</span></div></div>
+        </div>
+        <h2 id="resultTitle">训练完成</h2>
+        <p id="resultSub"></p>
+      </div>
+      <div class="result-grid">
+        <div class="panel-dark">
+          <div class="panel-title">本次成绩 <span class="code">// METRICS</span></div>
+          <div class="bm-grid">
+            <div class="bm"><div class="v" id="rWpm">0</div><div class="l" id="rWpmLabel">字/分钟</div></div>
+            <div class="bm"><div class="v ok" id="rKeys">0</div><div class="l">有效击键</div></div>
+            <div class="bm"><div class="v gold" id="rTime">0:00</div><div class="l">总用时</div></div>
+            <div class="bm"><div class="v" id="rErr">0</div><div class="l">错误次数</div></div>
+          </div>
+        </div>
+        <div class="panel-dark">
+          <div class="panel-title">薄弱键位 TOP 5 <span class="code">// WEAK KEYS</span></div>
+          <div id="weakList"></div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-primary" id="againBtn">再练一次</button>
+        <button class="btn" id="nextTextBtn">换一段继续</button>
+        <button class="btn" id="resultStatsBtn">查看全部成绩</button>
+        <button class="btn" id="resultHomeBtn">返回首页</button>
+      </div>
+    </section>
+
+    <!-- ========== 成绩统计 ========== -->
+    <section class="page" id="page-stats">
+      <div class="page-head" data-eyebrow="DATA / PERFORMANCE LOG">
+        <div>
+          <h1>成绩统计</h1>
+          <div class="page-sub">CLOUD SYNCED RECORDS — 成绩已同步至云端</div>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-sm" id="exportBtn">导出备份</button>
+          <button class="btn btn-sm" id="dataDirBtn">数据目录</button>
+          <button class="btn btn-sm btn-danger" id="clearRecords">清空记录</button>
+        </div>
+      </div>
+      <div class="stat-strip" id="statsOverview"></div>
+      <div class="panel-dark" style="padding:0">
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead><tr>
+              <th style="width:20%">时间</th><th style="width:22%">模式</th>
+              <th class="num" style="width:14%">速度</th><th class="num" style="width:12%">准确率</th>
+              <th class="num" style="width:12%">用时</th><th class="num" style="width:20%">错误数</th>
+            </tr></thead>
+            <tbody id="recordsBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state hidden" id="recordsEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          <div>暂无训练记录，完成一次训练后此处显示成绩</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 单词雨游戏 ========== -->
+    <section class="page" id="page-game">
+      <div class="page-head" data-eyebrow="GAME / WORD RAIN">
+        <div>
+          <h1>单词雨</h1>
+          <div class="page-sub">TYPE TO INTERCEPT — 敲出下落单词将其拦截</div>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-sm btn-primary" id="gameRestart">重新开始</button>
+        </div>
+      </div>
+      <div id="gameStage">
+        <div class="game-hud">
+          <div class="gh" id="gScore">0<small>得分 SCORE</small></div>
+          <div class="gh" id="gLevel">1<small>等级 LEVEL</small></div>
+          <div class="gh" id="gCombo">0<small>连击 COMBO</small></div>
+          <div style="flex:1"></div>
+          <div class="gh lives" id="gLives">◆◆◆<small style="color:var(--faint);letter-spacing:.1em">生命 LIFE</small></div>
+        </div>
+        <div class="ground"></div>
+        <input class="game-input" id="gameInput" autocomplete="off" placeholder="点击此处后输入单词…" disabled>
+        <div class="game-overlay" id="gameOverlay">
+          <div>
+            <h3 id="goTitle">单词雨</h3>
+            <p id="goDesc">单词会不断从顶部落下，输入完整单词即可拦截消除<br>漏掉 3 个单词游戏结束，速度随等级提升</p>
+            <button class="btn btn-primary" id="gameStart">开始游戏</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 使用说明 ========== -->
+    <section class="page" id="page-howto">
+      <div class="page-head" data-eyebrow="MANUAL / FINGERING GUIDE">
+        <div>
+          <h1>指法与说明</h1>
+          <div class="page-sub">STANDARD TOUCH TYPING — 标准盲打指法</div>
+        </div>
+      </div>
+      <div class="panel-dark howto">
+        <h4>一、基准键手位</h4>
+        <ul>
+          <li>左手食指到小指依次放在 <b>F D S A</b>，右手放在 <b>J K L ;</b>。F、J 键上有凸起，靠触摸定位，不看键盘。</li>
+          <li>双手大拇指轻放在<b>空格键</b>上。虚拟键盘底部彩条表示各手指负责区域，训练时会高亮下一个该按的键。</li>
+          <li>击键后手指立刻回到基准键，眼睛始终看屏幕——这就是“盲打”。</li>
+        </ul>
+        <h4>二、十指分工</h4>
+        <ul>
+          <li><b>左手小指</b>：` 1 Q A Z　<b>左手无名指</b>：2 W S X　<b>左手中指</b>：3 E D C　<b>左手食指</b>：4 5 R T F G V B</li>
+          <li><b>右手食指</b>：6 7 Y U H J N M　<b>右手中指</b>：8 I K ,　<b>右手无名指</b>：9 O L .　<b>右手小指</b>：0 P ; / 及右侧符号</li>
+        </ul>
+        <h4>三、训练模式</h4>
+        <ul>
+          <li><b>键位入门</b>：10 节小课，从基准键开始逐排掌握，零基础首选。</li>
+          <li><b>英文单词 / 文章</b>：高频词与短文，练连贯输入；<b>数字专项</b>练数字行；<b>代码片段</b>练符号、大小写与缩进。</li>
+          <li><b>中文拼音</b>：切换到系统中文输入法（微软 / 搜狗拼音等），在输入框正常打字，汉字上方有拼音提示。</li>
+          <li><b>单词雨</b>：游戏化强化，练反应速度与拼写直觉。</li>
+        </ul>
+        <h4>四、成绩口径</h4>
+        <ul>
+          <li>英文速度为 <b>WPM（词/分钟，每 5 个字符计 1 词）</b>，中文为<b>字/分钟</b>；准确率 = 正确击键 ÷ 总击键。</li>
+          <li>每次完成自动记录，并统计最容易按错的“薄弱键位”，便于针对性练习。</li>
+          <li>成绩同时保存在本机数据目录，并通过「我的主页」同步到云端，换电脑登录同一邮箱即可继续；也可随时导出 JSON 备份。</li>
+        </ul>
+        <h4>五、练习建议</h4>
+        <ul>
+          <li>先保证准确率稳定在 <b>95% 以上</b>，再追求速度；每天 15–20 分钟，约一周即可形成肌肉记忆。</li>
+          <li>快捷键：<kbd>Enter</kbd> 开始训练，<kbd>Esc</kbd> 重新开始；桌面版按 <kbd>Ctrl+Shift+I</kbd> 可调出开发者工具。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== 我的主页 ========== -->
+    <section class="page" id="page-profile">
+      <div class="page-head" data-eyebrow="ACCOUNT / CLOUD SYNC">
+        <div>
+          <h1>我的主页</h1>
+          <div class="page-sub">ACCOUNT &amp; CLOUD SYNC — 账号信息与云端成绩同步</div>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-sm btn-primary" id="profileSyncBtn">立即同步</button>
+          <button class="btn btn-sm btn-danger" id="profileLogoutBtn">退出登录</button>
+        </div>
+      </div>
+
+      <div class="profile-grid">
+        <div class="panel-dark">
+          <div class="panel-title">账号信息 <span class="code">// ACCOUNT</span></div>
+          <div id="profileAccount"></div>
+        </div>
+        <div class="panel-dark">
+          <div class="panel-title">云端同步 <span class="code">// CLOUD</span></div>
+          <div id="profileCloud"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="toastRoot"></div>
+
+<script src="js/browser-api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/keyboard.js"></script>
+<script src="js/practice.js"></script>
+<script src="js/game.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/cloud.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/app.js"></script>
+<script src="js/init.js"></script>
+</body>
+</html>

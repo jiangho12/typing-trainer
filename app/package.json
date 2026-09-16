@@ -1,0 +1,16 @@
+{
+  "name": "typing-trainer",
+  "version": "1.2.0",
+  "description": "打字训练场：无广告、无捆绑、成绩云端同步的打字练习桌面软件（CIOT 工作室出品）",
+  "main": "main/index.js",
+  "author": "CIOT Studio",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-packager": "^17.1.2"
+  }
+}
